@@ -203,6 +203,19 @@ const countdownPhrase = letter.isBirthday
     );
   }
 
+  function isPreview(): boolean {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return (
+        params.get("p") === "1" ||
+        params.get("preview") === "1" ||
+        params.get("santi") === "1"
+      );
+    } catch {
+      return false;
+    }
+  }
+
   function init(): void {
     const root = document.querySelector<HTMLElement>(".letter-page");
     if (!root) return;
@@ -214,9 +227,18 @@ const countdownPhrase = letter.isBirthday
     const open = root.querySelector<HTMLElement>(".open-screen");
     if (!locked || !open) return;
 
-    if (date <= today) {
+    const preview = isPreview();
+
+    if (preview || date <= today) {
       open.classList.remove("hidden");
       locked.classList.add("hidden");
+      if (preview) {
+        const banner = document.createElement("div");
+        banner.textContent = "MODO PREVIEW (solo tú la ves)";
+        banner.style.cssText =
+          "position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#d94f7c;color:#fff;padding:6px 14px;border-radius:999px;font-family:system-ui,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;z-index:50;box-shadow:0 6px 18px -4px rgba(217,79,124,0.5);";
+        document.body.appendChild(banner);
+      }
     } else {
       locked.classList.remove("hidden");
       open.classList.add("hidden");
