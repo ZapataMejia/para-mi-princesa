@@ -1,9 +1,14 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Crown from "../../components/Crown.astro";
-import Sparkles from "../../components/Sparkles.astro";
+import Doodle from "../../components/Doodle.astro";
 import Confetti from "../../components/Confetti.astro";
-import { letters, FIRMA, APODO } from "../../data/letters";
+import {
+  letters,
+  FIRMA,
+  APODO,
+  daysUntilBirthday,
+  parseHighlights,
+} from "../../data/letters";
 
 export async function getStaticPaths() {
   return letters.map((letter) => ({
@@ -20,34 +25,40 @@ const monthNames = [
 ];
 const [yyyy, mm, dd] = letter.date.split("-").map(Number);
 const fechaLarga = `${dd} de ${monthNames[(mm ?? 1) - 1]} de ${yyyy}`;
+
+const diasRestantes = daysUntilBirthday(letter.date);
+const countdownPhrase = letter.isBirthday
+  ? "¡Hoy es tu cumpleaños, mi reina!"
+  : diasRestantes === 1
+    ? "Mañana es tu cumple!!"
+    : `Solamente faltan ${diasRestantes} días para tu cumple!!`;
 ---
 
 <Layout title={`${letter.title} · Día ${letter.day}`} description={letter.preview}>
   <div
-    class="letter-page relative mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col items-center justify-center px-5 py-10 sm:py-16"
+    class="letter-page relative mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col items-center justify-center px-5 py-8 sm:py-14"
     data-date={letter.date}
     data-birthday={letter.isBirthday ? "true" : "false"}
   >
+    {/* PANTALLA BLOQUEADA */}
     <div class="locked-screen hidden w-full">
-      <article class="princess-card relative w-full overflow-hidden rounded-[28px] px-6 py-12 text-center">
-        <Sparkles count={10} />
+      <article class="paper paper--no-tape relative mx-auto w-full max-w-2xl px-7 py-10 text-center sm:px-12 sm:py-14">
+        <div class="absolute -top-4 left-6 -rotate-6">
+          <Doodle type="heart-trio" size={70} class="opacity-70" />
+        </div>
         <div class="relative z-10 flex flex-col items-center gap-4">
-          <svg viewBox="0 0 64 64" class="h-16 w-16 text-[#d9a83e]" fill="currentColor" aria-hidden="true">
-            <path d="M20 28V20a12 12 0 0 1 24 0v8h2a4 4 0 0 1 4 4v22a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h2zm4 0h16v-8a8 8 0 1 0-16 0v8z"/>
-            <circle cx="32" cy="44" r="3.5" fill="#fff"/>
-            <rect x="30.5" y="44" width="3" height="8" fill="#fff" rx="1"/>
-          </svg>
-          <p class="text-fairy text-3xl text-[#d94f7c]">Aún no, {APODO}</p>
-          <p class="max-w-md text-[#6b3a52]/85">
-            Esta cartita se desbloquea el <strong>{fechaLarga}</strong>. Sé
-            paciente, mi amor, vale la pena la espera.
+          <Doodle type="cake" size={80} class="doodle-wobble" />
+          <h1 class="title-marker">Aún no, {APODO}</h1>
+          <p class="handwritten max-w-md">
+            Esta cartita se desbloquea el <span class="highlight">{fechaLarga}</span>.
+            Sé paciente, mi amor, vale la pena la espera.
           </p>
-          <p class="text-sm uppercase tracking-[0.18em] text-[#a0567a]/85">
-            Faltan <strong data-locked-days>--</strong> días
+          <p class="countdown-line mt-1">
+            Faltan <span class="countdown-pill" data-locked-days>--</span> días para abrirla
           </p>
           <a
             href="/"
-            class="mt-2 inline-flex items-center gap-2 rounded-full bg-[#ff6fa1] px-5 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-md transition hover:scale-105"
+            class="mt-4 inline-flex items-center gap-2 rounded-full bg-[#ff6fa1] px-5 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-md transition hover:scale-105"
           >
             Volver al inicio
           </a>
@@ -55,66 +66,121 @@ const fechaLarga = `${dd} de ${monthNames[(mm ?? 1) - 1]} de ${yyyy}`;
       </article>
     </div>
 
+    {/* PANTALLA DESBLOQUEADA */}
     <div class="open-screen hidden w-full">
       {letter.isBirthday && <Confetti />}
 
       <article
         class:list={[
-          "princess-card relative w-full overflow-hidden rounded-[28px] px-6 py-10 text-left sm:px-12 sm:py-14",
-          letter.isBirthday ? "birthday-letter" : "",
+          "paper relative mx-auto w-full max-w-2xl px-6 py-12 sm:px-12 sm:py-16",
+          letter.isBirthday ? "paper--birthday" : "",
         ]}
       >
-        {letter.isBirthday && <Sparkles count={22} />}
-
-        <header class="relative z-10 mb-8 flex flex-col items-center gap-3 text-center">
-          {letter.isBirthday && <Crown size={96} />}
-          {!letter.isBirthday && <span class="text-5xl">{letter.emoji}</span>}
-          <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#a0567a]">
-            Día {letter.day} · {fechaLarga}
-          </p>
-          <h1
-            class:list={[
-              "text-script text-[#d94f7c]",
-              letter.isBirthday ? "text-4xl sm:text-6xl" : "text-3xl sm:text-5xl",
-            ]}
-          >
-            {letter.title}
-          </h1>
-          <span class="dotted-divider mt-2 h-[2px] w-32"></span>
-        </header>
-
-        <div class="relative z-10 mx-auto max-w-2xl space-y-4 text-base leading-relaxed text-[#4f2a3d] sm:text-lg">
-          {letter.body.map((paragraph) => <p>{paragraph}</p>)}
+        {/* esquinas decorativas */}
+        <div class="pointer-events-none absolute right-4 top-2 sm:right-8 sm:top-4">
+          <Doodle type="heart-trio" size={110} class="opacity-95" />
+        </div>
+        <div class="pointer-events-none absolute -left-2 top-32 hidden sm:block">
+          <Doodle type="scribble" size={110} color="#ff8fb1" rotate={-8} />
+        </div>
+        <div class="pointer-events-none absolute -right-2 bottom-44 hidden sm:block">
+          <Doodle type="star" size={32} class="doodle-wobble" rotate={12} />
+        </div>
+        <div class="pointer-events-none absolute -left-3 bottom-36 hidden sm:block">
+          <Doodle type="ribbon" size={70} rotate={-12} />
         </div>
 
-        <footer class="relative z-10 mt-10 flex flex-col items-end gap-1 text-right">
-          {letter.signoff && (
-            <p class="text-fairy text-2xl text-[#d94f7c]">{letter.signoff}</p>
-          )}
-          <p class="text-script text-xl text-[#6b3a52]">{FIRMA}</p>
+        {/* saludo big */}
+        <header class="relative z-10 mb-6">
+          <h1 class="title-marker inline-block">
+            <span set:html={parseHighlights(letter.greeting)} />
+          </h1>
+          <div class="mt-4">
+            <span class="pet-names" set:html={parseHighlights(letter.petNames)} />
+          </div>
+          <p class="handwritten mt-4 text-[#2c2330]">
+            <span set:html={parseHighlights(letter.opener)} />
+          </p>
+        </header>
+
+        {/* margen note */}
+        {letter.marginNote && (
+          <aside class="relative z-10 mb-6 flex justify-end sm:absolute sm:right-6 sm:top-44 sm:mb-0 sm:max-w-[180px]">
+            <span class="margin-note" set:html={letter.marginNote} />
+          </aside>
+        )}
+
+        {/* cuerpo */}
+        <div class="handwritten relative z-10 mt-2 space-y-2 sm:max-w-[80%]">
+          {letter.body.map((paragraph) => (
+            <p set:html={parseHighlights(paragraph)} />
+          ))}
+        </div>
+
+        {/* countdown line */}
+        <div class="relative z-10 mt-8 flex flex-wrap items-center gap-3">
+          <p class="countdown-line">
+            {!letter.isBirthday && (
+              <>
+                Solamente faltan{" "}
+                <span class="countdown-pill">{diasRestantes}</span>{" "}
+                {diasRestantes === 1 ? "día" : "días"} para tu cumple!!
+              </>
+            )}
+            {letter.isBirthday && (
+              <span class="title-marker text-[#d94f7c]">¡Hoy es tu cumple, mi vida!!</span>
+            )}
+          </p>
+          {!letter.isBirthday && <Doodle type="balloon" size={56} class="doodle-wobble" rotate={-6} />}
+          {letter.isBirthday && <Doodle type="cake" size={70} class="doodle-wobble" />}
+        </div>
+
+        {/* cierre */}
+        <div class="relative z-10 mt-8 space-y-2">
+          <p class="handwritten" set:html={parseHighlights(letter.closing)} />
+          <p class="handwritten font-semibold text-[#2c2330]" set:html={parseHighlights(letter.signoffLine)} />
+        </div>
+
+        {/* firma */}
+        <footer class="relative z-10 mt-10 flex items-end justify-between">
+          <Doodle type="princess" size={120} class="opacity-95" />
+          <div class="text-right">
+            <p class="signature">{FIRMA}</p>
+            <p class="text-hand text-sm text-[#7a3a55]">{fechaLarga}</p>
+          </div>
         </footer>
       </article>
 
       <nav class="mt-8 flex w-full items-center justify-between">
         <a
           href="/"
-          class="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#d94f7c] shadow-sm transition hover:scale-105"
+          class="inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#d94f7c] shadow-sm transition hover:scale-105"
         >
           ← Todas las cartas
         </a>
-        <p class="text-xs text-[#a0567a]/80">{APODO}, te amo.</p>
+        <p class="text-hand text-xl text-[#7a3a55]">Te amo, {APODO}.</p>
       </nav>
     </div>
   </div>
 </Layout>
 
 <style>
-  .birthday-letter {
-    background: linear-gradient(180deg, #fff8f0 0%, #ffe4ec 50%, #e8d5f2 100%);
-    border: 2px solid rgba(244, 201, 93, 0.85);
+  .paper--birthday {
+    background-color: #fff8f0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(244, 201, 93, 0.18) 0, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(255, 143, 177, 0.18) 0, transparent 45%),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 35px,
+        rgba(217, 192, 222, 0.28) 35px,
+        rgba(217, 192, 222, 0.28) 36px
+      );
     box-shadow:
-      0 0 60px -10px rgba(244, 201, 93, 0.5),
-      0 18px 40px -10px rgba(255, 111, 161, 0.5);
+      0 0 0 2px rgba(244, 201, 93, 0.45),
+      0 22px 50px -12px rgba(80, 30, 60, 0.4),
+      0 0 60px -10px rgba(244, 201, 93, 0.45);
   }
 </style>
 

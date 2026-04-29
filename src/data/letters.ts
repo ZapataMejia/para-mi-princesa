@@ -1,35 +1,53 @@
 export interface Letter {
   day: number;
-  date: string; // formato "YYYY-MM-DD" (zona America/Bogota)
+  date: string;
   slug: string;
   title: string;
   emoji: string;
   preview: string;
+  greeting: string;
+  petNames: string;
+  opener: string;
   body: string[];
-  signoff?: string;
+  marginNote?: string;
+  closing: string;
+  signoffLine: string;
   isBirthday?: boolean;
 }
 
 export const NOMBRE = "Esmeralda";
 export const APODO = "Pollito";
-export const FIRMA = "Tu Santiago, que te ama con todo el alma";
+export const FIRMA = "Tu Santi";
+export const BIRTHDAY_DATE = "2026-05-10";
+export const TARGET_DATE_ISO = "2026-05-10T00:00:00-05:00";
+
+export function daysUntilBirthday(fromDate: string): number {
+  const [y1, m1, d1] = fromDate.split("-").map(Number);
+  const [y2, m2, d2] = BIRTHDAY_DATE.split("-").map(Number);
+  const a = Date.UTC(y1!, (m1 ?? 1) - 1, d1 ?? 1);
+  const b = Date.UTC(y2!, (m2 ?? 1) - 1, d2 ?? 1);
+  return Math.round((b - a) / (1000 * 60 * 60 * 24));
+}
 
 export const letters: Letter[] = [
   {
     day: 1,
     date: "2026-04-28",
     slug: "dia-1",
-    title: "Empieza la cuenta regresiva, Pollito",
+    title: "Empieza la cuenta regresiva",
     emoji: "👑",
     preview:
-      "Hoy abro la primera carta de muchas. Cada día hasta tu cumpleaños te voy a recordar lo mucho que te amo.",
+      "Hoy abro la primera cartita de muchas. Una cada día hasta tu cumpleaños.",
+    greeting: "Mi Amor!!",
+    petNames: "Mi Vida linda!!, Mi Reina, Mi Tesoro",
+    opener: "¿Cómo estás Mi Tesoro?",
     body: [
-      "Mi princesa Esmeralda, hoy empieza una cuenta regresiva muy especial: trece días para celebrar el día más bonito del año, el día en que llegaste al mundo y, sin saberlo, también a mi vida.",
-      "Quise hacerte algo que pudieras abrir cada mañana, como abrir una cajita de regalo chiquitita: una carta cada día, hasta que llegue el diez de mayo y por fin te pueda decir feliz cumpleaños en persona, abrazándote y comiéndote a besos.",
-      "No esperes nada perfecto. Espera algo hecho con todo mi amor, con paciencia, con detalles, pensando en ti en cada palabra. Porque eso eres tú para mí: el detalle más bonito de mi día.",
-      "Pollito, prepárate, porque vienen doce sorpresitas más antes del gran día. Te amo más de lo que sabes decir mi corazón.",
+      "No te quiero emocionar, pero te tengo una *sorpresa*. Voy a escribirte una cartita cada día hasta tu cumpleaños.",
+      "*Cada mañana* abres una nueva. Hoy empieza la magia, Pollito.",
     ],
-    signoff: "Con mucho amor, hoy y siempre,",
+    marginNote: "“Gracias por llegar a mi vida”",
+    closing: "*Te Amo más* que a mi propia vida, gracias por enamorarme día tras día.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 2,
@@ -37,15 +55,17 @@ export const letters: Letter[] = [
     slug: "dia-2",
     title: "El día que te conocí",
     emoji: "🌷",
-    preview:
-      "Hay días que cambian todo sin avisar. El día que te conocí fue uno de esos.",
+    preview: "Ese día cambió todo, aunque yo no lo sabía todavía.",
+    greeting: "Mi Amor!!",
+    petNames: "Mi Vida, Mi Princesa",
+    opener: "¿Cómo amaneció hoy mi *cosita linda*?",
     body: [
-      "Hay momentos que uno no se da cuenta que son importantes hasta mucho después. El día que te conocí fue uno de esos. No sabía que me estaba cruzando con la persona que iba a hacerme tan feliz.",
-      "Recuerdo tu mirada, tu risa tan tuya, esa forma de hablar que tienes y que enamora sin permiso. Recuerdo haber pensado en silencio: 'esta niña tiene algo distinto'. Y lo confirmo cada día.",
-      "Desde ese día, mi vida se llenó de motivos para sonreír. Cada conversación, cada mirada, cada beso fue construyendo lo que tenemos hoy: algo bonito, real, nuestro.",
-      "Pollito, gracias por dejarme conocerte, por dejarme acercarme, por confiar en mí. Eres el mejor encuentro de mi vida.",
+      "Hay días que cambian todo sin avisar. *El día que te conocí* fue uno de esos.",
+      "No sabía que me estaba cruzando con la persona que iba a hacerme tan feliz. Y míranos hoy, *contando los días* para celebrarte.",
     ],
-    signoff: "Eternamente agradecido,",
+    marginNote: "“Eres el mejor encuentro de mi vida”",
+    closing: "Gracias por *dejarme conocerte*, por confiar, por quererme.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 3,
@@ -53,15 +73,17 @@ export const letters: Letter[] = [
     slug: "dia-3",
     title: "Tu sonrisa, mi lugar favorito",
     emoji: "🌸",
-    preview:
-      "Si tuviera que escoger un solo lugar en el mundo para vivir para siempre, sería tu sonrisa.",
+    preview: "Si tuviera que escoger un solo lugar para vivir, sería tu sonrisa.",
+    greeting: "Mi Tesoro!!",
+    petNames: "Mi Reina, Mi Pollito hermoso",
+    opener: "¿Sabes cuál es mi *lugar favorito*?",
     body: [
-      "He visto atardeceres, paisajes, mares, fotos lindas de lugares lejanos. Pero nada se compara con el momento en que sonríes. Tu sonrisa es ese lugar al que siempre quiero volver.",
-      "Cuando estás triste y de repente algo te hace reír, ahí me derrites. Esa sonrisa tuya, esa que se te escapa, esa que arruga un poquito la nariz, esa es mi parte favorita del universo.",
-      "Quiero que sepas que voy a hacer lo posible por ser yo el motivo de muchísimas más sonrisas tuyas. Las quiero coleccionar todas.",
-      "Pollito, sigue sonriendo siempre. Tu sonrisa hace que todo valga la pena.",
+      "Es *tu sonrisa*. Esa que se te escapa, esa que arruga un poquito la nariz, esa es mi parte favorita del universo.",
+      "Voy a hacer lo posible por ser yo el motivo de muchísimas más sonrisas tuyas. *Las quiero coleccionar todas.*",
     ],
-    signoff: "Tu fan número uno,",
+    marginNote: "“Sigue sonriendo, princesa”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 4,
@@ -69,20 +91,18 @@ export const letters: Letter[] = [
     slug: "dia-4",
     title: "Razones por las que te amo (parte 1)",
     emoji: "💖",
-    preview:
-      "Hice una lista. Sé que es cursi. Pero te amo demasiado y necesitaba decírtelo.",
+    preview: "Hice una lista. Sé que es cursi. Te amo demasiado.",
+    greeting: "Mi Amor!!",
+    petNames: "Mi Vida linda, Mi Reina",
+    opener: "Hoy tengo una *lista* para ti.",
     body: [
-      "Te amo porque eres dulce sin tener que esforzarte.",
-      "Te amo porque tu manera de cuidar a la gente es bonita y silenciosa.",
-      "Te amo porque eres detallista, porque te acuerdas de las cosas pequeñas.",
-      "Te amo porque cuando estás cansada te pones más tierna y eso me derrite.",
-      "Te amo porque tienes mil expresiones distintas y cada una me hace reír de otra forma.",
-      "Te amo porque me haces sentir como un niño cuando estoy contigo.",
-      "Te amo porque me retas a ser mejor sin pedírmelo.",
-      "Te amo porque crees en mí cuando yo dudo.",
-      "Pollito, esto apenas empieza. Hay otra parte más adelante.",
+      "Te amo porque eres *dulce* sin esforzarte. Porque tu manera de cuidar a la gente es bonita y silenciosa.",
+      "Te amo porque eres *detallista*, porque te acuerdas de las cosas pequeñas. Porque cuando estás cansada te pones más tierna y eso me derrite.",
+      "Esto apenas empieza, *hay otra parte* más adelante.",
     ],
-    signoff: "Amándote por todas estas razones (y muchas más),",
+    marginNote: "“Eres mi razón favorita”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 5,
@@ -90,15 +110,17 @@ export const letters: Letter[] = [
     slug: "dia-5",
     title: "Tu fortaleza, mi admiración",
     emoji: "🦢",
-    preview:
-      "Creo que no te lo digo lo suficiente: te admiro.",
+    preview: "Hay algo de ti que no siempre te digo en voz alta.",
+    greeting: "Mi Princesa!!",
+    petNames: "Mi Reina, Mi Tesoro",
+    opener: "¿Sabes algo, Pollito?",
     body: [
-      "Pollito, hay algo de ti que no siempre te digo en voz alta y hoy te lo quiero escribir: me impresiona lo fuerte que eres.",
-      "Has pasado por cosas difíciles, has llorado, te has caído, te has levantado. Y lo has hecho con una elegancia que nadie te enseñó. Eso es de princesas, pero de las de verdad: las que aguantan tormentas con la corona puesta.",
-      "Te admiro porque trabajas duro, porque persigues lo que quieres, porque no te rindes fácil. Te admiro porque sigues siendo dulce a pesar de todo lo que has vivido. Eso, mi amor, es lo más valiente que existe.",
-      "Cuando dudes de ti, léeme: yo te veo desde afuera y veo a una mujer increíble. Tienes en mí a alguien que cree en ti hasta cuando tú no puedes.",
+      "*Te admiro.* Has pasado por cosas difíciles, te has caído, te has levantado. Y lo has hecho con una elegancia que nadie te enseñó.",
+      "Eso es de *princesas de las de verdad*: las que aguantan tormentas con la corona puesta. Cuando dudes de ti, léeme: yo te veo desde afuera y veo a una *mujer increíble*.",
     ],
-    signoff: "Tu admirador de toda la vida,",
+    marginNote: "“Tienes en mí a alguien que cree en ti”",
+    closing: "*Te Amo más* que a mi propia vida, mi reina valiente.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 6,
@@ -106,15 +128,17 @@ export const letters: Letter[] = [
     slug: "dia-6",
     title: "Nuestros pequeños rituales",
     emoji: "☕",
-    preview:
-      "Esas cositas pequeñas que solo hacemos nosotros dos.",
+    preview: "Esas cositas que solo nosotros entendemos.",
+    greeting: "Mi Amor!!",
+    petNames: "Mi Compañera, Mi Cómplice",
+    opener: "¿Te has dado cuenta?",
     body: [
-      "Hay algo mágico en las cosas que solo tú y yo entendemos. El chiste interno que nadie más capta. La manera en que me llamas. El gesto que te hago cuando estoy nervioso. Esas cositas chiquitas son nuestras, y son sagradas.",
-      "Me encanta cuando me cuentas tu día con todos los detalles, hasta los más pequeños. Me encanta cuando ves algo y dices 'mira esto, te iba a gustar'. Me encanta cuando me mandas un audio de la nada solo para decirme que me amas.",
-      "Esos pequeños rituales son lo que hace que lo nuestro se sienta tan en casa. No es solo amor: es complicidad, costumbre bonita, idioma propio.",
-      "Quiero seguir construyendo cositas así contigo. Muchas. Todas las que se nos ocurran.",
+      "Hay cositas que *solo tú y yo* entendemos. El chiste interno, la manera en que me llamas, el gesto que te hago cuando estoy nervioso.",
+      "Esas cositas son *nuestras*, son sagradas, son nuestro idioma. Quiero seguir construyendo muchas más contigo, *todas las que se nos ocurran*.",
     ],
-    signoff: "Tu cómplice,",
+    marginNote: "“Mi cómplice favorita”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 7,
@@ -122,15 +146,17 @@ export const letters: Letter[] = [
     slug: "dia-7",
     title: "Por qué eres mi princesa",
     emoji: "👸",
-    preview:
-      "No te digo princesa por decir. Te lo digo porque lo eres en serio.",
+    preview: "No te digo princesa por decir. Lo eres en serio.",
+    greeting: "Mi Princesa!!",
+    petNames: "Mi Reina, Mi Esmeralda",
+    opener: "Te lo voy a decir bien clarito.",
     body: [
-      "Pollito, cuando te digo princesa no es de juego. Es porque cuando entras a un lugar, todo se siente más bonito. Es porque tienes esa elegancia natural que no se aprende.",
-      "Eres mi princesa porque mereces que te traten con suavidad, con respeto, con admiración. Porque mereces atardeceres, flores, abrazos largos, canciones dedicadas, cartas como esta.",
-      "Eres mi princesa porque te respeto profundamente. Porque admiro lo que eres. Porque tu reino, aunque sea chiquito, está lleno de cosas hermosas: tu casa, tu familia, tus amigos, tus sueños, y ahora me dejas estar aquí dentro también.",
-      "Y aunque seas princesa, sé que también eres humana. Tienes días malos, dudas, miedos. Y por eso voy a estar aquí, en lo bueno, pero sobre todo en lo no tan bueno. Porque las princesas también necesitan a alguien que les sostenga la corona cuando se cansan.",
+      "Cuando te digo *princesa* no es de juego. Cuando entras a un lugar todo se siente más bonito. Tienes esa *elegancia natural* que no se aprende.",
+      "Eres mi princesa porque mereces que te traten con suavidad, con respeto, con admiración. Porque mereces *atardeceres, flores, abrazos largos, cartas como esta*.",
     ],
-    signoff: "Tu caballero de planta,",
+    marginNote: "“Tu caballero de planta”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 8,
@@ -138,15 +164,17 @@ export const letters: Letter[] = [
     slug: "dia-8",
     title: "Sueños que tengo contigo",
     emoji: "✨",
-    preview:
-      "Los sueños se sienten más posibles cuando los pienso contigo.",
+    preview: "Los sueños se sienten más posibles cuando los pienso contigo.",
+    greeting: "Mi Vida!!",
+    petNames: "Mi Tesoro, Mi futuro favorito",
+    opener: "¿Quieres saber un secretito?",
     body: [
-      "Cuando me pongo a soñar despierto, cada vez más me doy cuenta de que estás en todos los planes. Viajes que quiero hacer, lugares que quiero conocer, casa, mascotas, mañanas tomando café, noches viendo películas, sábados sin afán.",
-      "Quiero un futuro donde nos veamos cumpliendo cosas. Tú haciendo lo tuyo, yo haciendo lo mío, y los dos celebrándonos en el medio.",
-      "Quiero sostenerte la mano cuando te pongas nerviosa. Quiero ser el primero en saber tus buenas noticias. Quiero verte vieja y seguirte diciendo Pollito.",
-      "No te asustes con la palabra futuro. Yo no tengo prisa, solo tengo claridad: contigo, los planes se sienten bonitos.",
+      "Cuando me pongo a soñar despierto, *estás en todos los planes*. Viajes, lugares, casa, mañanas tomando café, sábados sin afán.",
+      "Quiero un futuro donde *los dos nos celebremos*. No tengas miedo con la palabra futuro. Yo no tengo prisa, solo tengo *claridad*: contigo, los planes se sienten bonitos.",
     ],
-    signoff: "Soñando contigo,",
+    marginNote: "“Soñando contigo siempre”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 9,
@@ -154,19 +182,18 @@ export const letters: Letter[] = [
     slug: "dia-9",
     title: "Las cosas chiquitas que adoro de ti",
     emoji: "🍓",
-    preview:
-      "No las grandes. Las chiquitas. Las que casi nadie ve.",
+    preview: "Las pequeñas, las que casi nadie ve.",
+    greeting: "Mi Amor!!",
+    petNames: "Mi Pollito hermoso",
+    opener: "Voy a contarte un *secretito*.",
     body: [
-      "Adoro cómo te concentras cuando estás haciendo algo importante.",
-      "Adoro cómo te emocionas con los detalles bonitos que ven los demás solo por encima.",
-      "Adoro tu olor cuando te acabas de bañar.",
-      "Adoro cuando te ríes con ese tono más agudo que te sale cuando algo te causa mucha gracia.",
-      "Adoro tus manitos. Tus dedos. La forma en que se sienten cuando te tomo de la mano.",
-      "Adoro cuando me cuentas algo serio y te pones brava porque quieres que entienda.",
-      "Adoro cuando te quedas callada y se te ve pensando en algo, y me dejas adivinar qué es.",
-      "Adoro mil cosas chiquitas más, Pollito. Y cada día descubro una nueva.",
+      "Adoro cómo te concentras. Adoro cómo te emocionas con detalles bonitos que los demás ven solo por encima.",
+      "Adoro tus *manitos*, tus dedos, cómo se sienten cuando te tomo de la mano. Adoro cuando te quedas callada *pensando algo* y me dejas adivinar qué es.",
+      "*Mil cositas más*. Cada día descubro una nueva.",
     ],
-    signoff: "Coleccionando detallitos tuyos,",
+    marginNote: "“Coleccionando detallitos tuyos”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 10,
@@ -174,18 +201,18 @@ export const letters: Letter[] = [
     slug: "dia-10",
     title: "Promesas que te hago",
     emoji: "💍",
-    preview:
-      "No promesas para impresionarte. Promesas que de verdad puedo cumplir.",
+    preview: "No para impresionarte. Promesas que de verdad puedo cumplir.",
+    greeting: "Mi Reina!!",
+    petNames: "Mi Vida, Mi Tesoro",
+    opener: "Hoy te hago *promesas de verdad*.",
     body: [
-      "Te prometo escucharte cuando estés mal, sin tratar de arreglar todo de una.",
-      "Te prometo decirte la verdad, aunque me cueste, aunque a veces duela.",
-      "Te prometo cuidarte. En lo grande y en lo chiquito. Cuando estés enferma, cuando estés cansada, cuando estés feliz.",
-      "Te prometo respetar tus tiempos. Tus días buenos y los no tan buenos.",
-      "Te prometo seguirte conquistando, aunque ya estemos juntos. Porque el amor también es eso: no soltar el detalle.",
-      "Te prometo elegirte todos los días. Hoy, mañana, y cuando ya nada de esto sea novedad.",
-      "Pollito, no te prometo perfección. Te prometo presencia y esfuerzo. Eso sí, todos los días.",
+      "Te prometo *escucharte* cuando estés mal sin tratar de arreglar todo de una. Te prometo *decirte la verdad*, aunque a veces duela.",
+      "Te prometo *cuidarte*. Respetar tus tiempos. Seguir conquistándote aunque ya estemos juntos.",
+      "Te prometo *elegirte todos los días*. Hoy, mañana, y cuando ya nada de esto sea novedad.",
     ],
-    signoff: "Con mi palabra,",
+    marginNote: "“Con mi palabra, princesa”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 11,
@@ -193,20 +220,18 @@ export const letters: Letter[] = [
     slug: "dia-11",
     title: "Razones por las que te amo (parte 2)",
     emoji: "🩷",
-    preview:
-      "La continuación. Porque una sola lista no cabía.",
+    preview: "La continuación. Una sola lista no cabía.",
+    greeting: "Mi Amor!!",
+    petNames: "Mi Vida linda, Mi Reina",
+    opener: "*Parte dos* de la lista de mi corazón.",
     body: [
-      "Te amo porque me haces sentir en casa.",
-      "Te amo porque sabes pedir perdón y sabes recibirlo.",
-      "Te amo porque eres cariñosa de las cariñosas.",
-      "Te amo porque tienes ese mundo interior tan bonito y a veces me dejas entrar.",
-      "Te amo porque te emocionas con cosas pequeñas y eso me parece lo más tierno del mundo.",
-      "Te amo porque eres valiente, aunque tú no te creas valiente.",
-      "Te amo porque haces que las cosas normales se sientan especiales.",
-      "Te amo porque, aunque ya te lo he dicho mil veces, sigo sintiendo lo mismo cada vez que lo digo.",
-      "Pollito, podría seguir hasta llenar mil cuadernos. Pero esto te lo voy a seguir diciendo en voz alta el resto de mi vida.",
+      "Te amo porque me haces sentir *en casa*. Porque sabes pedir perdón y sabes recibirlo.",
+      "Te amo porque eres *valiente*, aunque tú no te creas valiente. Porque haces que las cosas normales se sientan especiales.",
+      "Aunque ya te lo he dicho mil veces, *sigo sintiendo lo mismo* cada vez que lo digo.",
     ],
-    signoff: "Más enamorado cada día,",
+    marginNote: "“Más enamorado cada día”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 12,
@@ -214,15 +239,18 @@ export const letters: Letter[] = [
     slug: "dia-12",
     title: "La víspera, mi corazón late fuerte",
     emoji: "🎀",
-    preview:
-      "Mañana es el día. No me cabe la emoción en el pecho.",
+    preview: "Mañana es el día. No me cabe la emoción en el pecho.",
+    greeting: "Mi Princesa!!",
+    petNames: "Mi Reina, Mi Pollito",
+    opener: "*Mañana* es tu día.",
     body: [
-      "Pollito, mañana es tu día. Y aunque he tenido doce días para prepararlo todo, hoy estoy más emocionado que nunca.",
-      "No sé bien por qué me emociona tanto tu cumpleaños. Quizás porque es la oportunidad de celebrarte sin pena, sin medirme, sin esconder lo mucho que te quiero. Es como un permiso oficial para ser exageradamente romántico contigo. Y yo lo voy a aprovechar.",
-      "Quiero que mañana te sientas la persona más amada del planeta. Quiero que te despiertes sintiendo que el mundo se conspira para mimarte un día entero.",
-      "Esta noche duerme rico, princesa. Sueña bonito. Sueña conmigo. Mañana, todo es para ti.",
+      "He esperado este día durante doce cartas. Y hoy estoy más *emocionado* que nunca.",
+      "Quiero que mañana te sientas la *persona más amada* del planeta. Esta noche duerme rico, sueña bonito, sueña conmigo.",
+      "*Mañana, todo es para ti.*",
     ],
-    signoff: "Con el corazón saltando,",
+    marginNote: "“Con el corazón saltando”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
   },
   {
     day: 13,
@@ -230,18 +258,19 @@ export const letters: Letter[] = [
     slug: "feliz-cumpleanos",
     title: "FELIZ CUMPLEAÑOS, MI PRINCESA POLLITO",
     emoji: "🎂",
-    preview:
-      "Llegó el día. Hoy se celebra a la persona más bonita que conozco.",
+    preview: "Llegó el día. Hoy se celebra a la persona más bonita que conozco.",
+    greeting: "FELIZ CUMPLEAÑOS!!",
+    petNames: "Mi Reina, Mi Esmeralda, Mi Pollito",
+    opener: "*¡Llegó tu día, mi vida!*",
     body: [
-      "FELIZ CUMPLEAÑOS, AMOR DE MI VIDA.",
-      "Hoy es tu día y quiero que el mundo entero lo sepa: hoy hace años nació la persona más linda del universo, mi Esmeralda, mi Pollito, mi princesa.",
-      "Gracias por existir. Gracias por dejarme entrar en tu vida. Gracias por elegirme entre tantas personas. Gracias por cada beso, cada risa, cada noche de hablar de tonterías hasta el sueño.",
-      "Te deseo un año lleno de cosas hermosas. Que se te cumplan tus sueños grandes y los chiquitos también. Que estés sana, en paz, feliz. Que sigas creyendo en ti tanto como yo creo en ti.",
-      "Y te prometo, en este nuevo año tuyo de vida, estar para ti. Cada día. Sin condiciones.",
-      "Te amo con todo lo que soy. Hoy y siempre.",
-      "Feliz cumpleaños, mi princesa. Hoy el reino entero está de fiesta por ti.",
+      "Hoy hace años nació la *persona más linda del universo*: tú.",
+      "Gracias por *existir*, gracias por *elegirme*, gracias por cada beso, cada risa, cada noche de hablar de tonterías hasta el sueño.",
+      "Te deseo un año lleno de cosas hermosas. Que se te cumplan tus sueños grandes y los chiquitos también. Que estés *sana, en paz, feliz*.",
+      "*Hoy el reino entero está de fiesta por ti.*",
     ],
-    signoff: "Tuyo, hoy y todos los días,",
+    marginNote: "“Tuyo, hoy y todos los días”",
+    closing: "*Te Amo más* que a mi propia vida.",
+    signoffLine: "Te Amo Hoy y Siempre",
     isBirthday: true,
   },
 ];
@@ -250,4 +279,6 @@ export function getLetterBySlug(slug: string): Letter | undefined {
   return letters.find((l) => l.slug === slug);
 }
 
-export const TARGET_DATE_ISO = "2026-05-10T00:00:00-05:00";
+export function parseHighlights(text: string): string {
+  return text.replace(/\*([^*]+)\*/g, '<span class="highlight">$1</span>');
+}
