@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Countdown from "../components/Countdown.astro";
+import LetterCard from "../components/LetterCard.astro";
+import Crown from "../components/Crown.astro";
+import Sparkles from "../components/Sparkles.astro";
+import { letters, NOMBRE, APODO } from "../data/letters";
+---
+
+<Layout
+  title={`Para mi princesa ${NOMBRE}`}
+  description={`Una cuenta regresiva con cartas diarias hasta el cumpleaños de ${APODO}.`}
+>
+  <main class="relative mx-auto flex max-w-6xl flex-col items-center px-5 py-10 sm:py-16">
+    <section class="relative w-full overflow-hidden rounded-[36px] px-5 py-12 text-center sm:px-10 sm:py-16">
+      <Sparkles count={18} />
+      <div class="relative z-10 flex flex-col items-center gap-5">
+        <Crown size={84} />
+        <p class="text-fairy text-3xl text-[#d94f7c] sm:text-4xl">
+          Para mi princesa
+        </p>
+        <h1 class="text-script text-5xl text-[#d94f7c] drop-shadow-sm sm:text-7xl">
+          {NOMBRE}
+        </h1>
+        <p class="max-w-xl text-base text-[#6b3a52]/85 sm:text-lg">
+          {APODO}, hice esto pensando en ti. Cada día, hasta tu cumpleaños, vas
+          a poder abrir una cartita nueva. Las que aún no es su momento estarán
+          esperándote bajo un candadito dorado, paciencia mi amor.
+        </p>
+
+        <div class="mt-4 flex flex-col items-center gap-3">
+          <p class="text-sm font-semibold uppercase tracking-[0.22em] text-[#a0567a]">
+            Faltan para tu cumpleaños
+          </p>
+          <Countdown />
+        </div>
+      </div>
+    </section>
+
+    <section class="relative mt-10 w-full sm:mt-16">
+      <div class="mb-6 flex items-center gap-4">
+        <span class="dotted-divider h-[2px] flex-1"></span>
+        <h2 class="text-script text-3xl text-[#d94f7c] sm:text-4xl">
+          Tus cartitas
+        </h2>
+        <span class="dotted-divider h-[2px] flex-1"></span>
+      </div>
+
+      <p class="mb-8 text-center text-sm text-[#6b3a52]/80 sm:text-base">
+        Trece cartas, una por día. La de hoy se ilumina sola, las pasadas
+        siguen disponibles para releerlas y las futuras te van a estar
+        esperando. Toca el día de hoy, mi amor.
+      </p>
+
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+        {letters.map((letter) => <LetterCard letter={letter} />)}
+      </div>
+    </section>
+
+    <footer class="mt-16 flex flex-col items-center gap-2 text-center text-sm text-[#a0567a]/80">
+      <Crown size={28} animated={false} />
+      <p class="text-fairy text-2xl text-[#d94f7c]">
+        Hecho con todo mi amor por Santiago
+      </p>
+      <p class="text-xs">Para Esmeralda, mi Pollito · 10 de mayo</p>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  import { initLockState } from "../scripts/lockState";
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLockState);
+  } else {
+    initLockState();
+  }
+</script>

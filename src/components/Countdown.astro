@@ -1,0 +1,103 @@
+---
+import { TARGET_DATE_ISO } from "../data/letters";
+
+interface Props {
+  targetIso?: string;
+}
+
+const { targetIso = TARGET_DATE_ISO } = Astro.props;
+
+const boxClass =
+  "flex min-w-[68px] flex-col items-center justify-center rounded-2xl bg-white/80 px-3 py-3 sm:min-w-[92px] sm:px-5 sm:py-4 gold-border shadow-[0_10px_30px_-8px_rgba(255,111,161,0.4)] backdrop-blur-sm";
+const numberClass =
+  "text-3xl font-bold text-[#d94f7c] sm:text-5xl tabular-nums tracking-tight";
+const labelClass =
+  "mt-1 text-xs uppercase tracking-[0.18em] text-[#a0567a] sm:text-sm";
+---
+
+<div
+  class="countdown mx-auto flex w-full max-w-2xl flex-wrap items-center justify-center gap-3 sm:gap-5"
+  data-target={targetIso}
+  aria-live="polite"
+>
+  <div class={boxClass}>
+    <span class={numberClass} data-unit="days">--</span>
+    <span class={labelClass}>días</span>
+  </div>
+  <span class="hidden text-3xl font-bold text-[#d94f7c]/40 sm:inline">:</span>
+  <div class={boxClass}>
+    <span class={numberClass} data-unit="hours">--</span>
+    <span class={labelClass}>horas</span>
+  </div>
+  <span class="hidden text-3xl font-bold text-[#d94f7c]/40 sm:inline">:</span>
+  <div class={boxClass}>
+    <span class={numberClass} data-unit="minutes">--</span>
+    <span class={labelClass}>min</span>
+  </div>
+  <span class="hidden text-3xl font-bold text-[#d94f7c]/40 sm:inline">:</span>
+  <div class={boxClass}>
+    <span class={numberClass} data-unit="seconds">--</span>
+    <span class={labelClass}>seg</span>
+  </div>
+  <p class="countdown-arrived hidden w-full text-center text-script text-2xl text-[#d94f7c] sm:text-3xl">
+    ¡Hoy es tu día, princesa!
+  </p>
+</div>
+
+<script>
+  function startCountdown(): void {
+    const root = document.querySelector<HTMLElement>(".countdown");
+    if (!root) return;
+    const targetIso = root.getAttribute("data-target");
+    if (!targetIso) return;
+
+    const target = new Date(targetIso).getTime();
+    const arrived = root.querySelector<HTMLElement>(".countdown-arrived");
+    const boxes = root.querySelectorAll<HTMLElement>(":scope > div, :scope > span:not(.countdown-arrived)");
+
+    const slots: Record<string, HTMLElement | null> = {
+      days: root.querySelector<HTMLElement>('[data-unit="days"]'),
+      hours: root.querySelector<HTMLElement>('[data-unit="hours"]'),
+      minutes: root.querySelector<HTMLElement>('[data-unit="minutes"]'),
+      seconds: root.querySelector<HTMLElement>('[data-unit="seconds"]'),
+    };
+
+    function pad(n: number): string {
+      return n < 10 ? "0" + n : String(n);
+    }
+
+    function tick(): void {
+      const now = Date.now();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        if (arrived) arrived.classList.remove("hidden");
+        boxes.forEach((b) => b.classList.add("hidden"));
+        if (slots.days) slots.days.textContent = "0";
+        if (slots.hours) slots.hours.textContent = "00";
+        if (slots.minutes) slots.minutes.textContent = "00";
+        if (slots.seconds) slots.seconds.textContent = "00";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      if (slots.days) slots.days.textContent = String(days);
+      if (slots.hours) slots.hours.textContent = pad(hours);
+      if (slots.minutes) slots.minutes.textContent = pad(minutes);
+      if (slots.seconds) slots.seconds.textContent = pad(seconds);
+    }
+
+    tick();
+    window.setInterval(tick, 1000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startCountdown);
+  } else {
+    startCountdown();
+  }
+</script>

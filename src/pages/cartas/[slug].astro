@@ -1,0 +1,169 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Crown from "../../components/Crown.astro";
+import Sparkles from "../../components/Sparkles.astro";
+import Confetti from "../../components/Confetti.astro";
+import { letters, FIRMA, APODO } from "../../data/letters";
+
+export async function getStaticPaths() {
+  return letters.map((letter) => ({
+    params: { slug: letter.slug },
+    props: { letter },
+  }));
+}
+
+const { letter } = Astro.props;
+
+const monthNames = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+];
+const [yyyy, mm, dd] = letter.date.split("-").map(Number);
+const fechaLarga = `${dd} de ${monthNames[(mm ?? 1) - 1]} de ${yyyy}`;
+---
+
+<Layout title={`${letter.title} · Día ${letter.day}`} description={letter.preview}>
+  <div
+    class="letter-page relative mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col items-center justify-center px-5 py-10 sm:py-16"
+    data-date={letter.date}
+    data-birthday={letter.isBirthday ? "true" : "false"}
+  >
+    <div class="locked-screen hidden w-full">
+      <article class="princess-card relative w-full overflow-hidden rounded-[28px] px-6 py-12 text-center">
+        <Sparkles count={10} />
+        <div class="relative z-10 flex flex-col items-center gap-4">
+          <svg viewBox="0 0 64 64" class="h-16 w-16 text-[#d9a83e]" fill="currentColor" aria-hidden="true">
+            <path d="M20 28V20a12 12 0 0 1 24 0v8h2a4 4 0 0 1 4 4v22a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h2zm4 0h16v-8a8 8 0 1 0-16 0v8z"/>
+            <circle cx="32" cy="44" r="3.5" fill="#fff"/>
+            <rect x="30.5" y="44" width="3" height="8" fill="#fff" rx="1"/>
+          </svg>
+          <p class="text-fairy text-3xl text-[#d94f7c]">Aún no, {APODO}</p>
+          <p class="max-w-md text-[#6b3a52]/85">
+            Esta cartita se desbloquea el <strong>{fechaLarga}</strong>. Sé
+            paciente, mi amor, vale la pena la espera.
+          </p>
+          <p class="text-sm uppercase tracking-[0.18em] text-[#a0567a]/85">
+            Faltan <strong data-locked-days>--</strong> días
+          </p>
+          <a
+            href="/"
+            class="mt-2 inline-flex items-center gap-2 rounded-full bg-[#ff6fa1] px-5 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-md transition hover:scale-105"
+          >
+            Volver al inicio
+          </a>
+        </div>
+      </article>
+    </div>
+
+    <div class="open-screen hidden w-full">
+      {letter.isBirthday && <Confetti />}
+
+      <article
+        class:list={[
+          "princess-card relative w-full overflow-hidden rounded-[28px] px-6 py-10 text-left sm:px-12 sm:py-14",
+          letter.isBirthday ? "birthday-letter" : "",
+        ]}
+      >
+        {letter.isBirthday && <Sparkles count={22} />}
+
+        <header class="relative z-10 mb-8 flex flex-col items-center gap-3 text-center">
+          {letter.isBirthday && <Crown size={96} />}
+          {!letter.isBirthday && <span class="text-5xl">{letter.emoji}</span>}
+          <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#a0567a]">
+            Día {letter.day} · {fechaLarga}
+          </p>
+          <h1
+            class:list={[
+              "text-script text-[#d94f7c]",
+              letter.isBirthday ? "text-4xl sm:text-6xl" : "text-3xl sm:text-5xl",
+            ]}
+          >
+            {letter.title}
+          </h1>
+          <span class="dotted-divider mt-2 h-[2px] w-32"></span>
+        </header>
+
+        <div class="relative z-10 mx-auto max-w-2xl space-y-4 text-base leading-relaxed text-[#4f2a3d] sm:text-lg">
+          {letter.body.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+
+        <footer class="relative z-10 mt-10 flex flex-col items-end gap-1 text-right">
+          {letter.signoff && (
+            <p class="text-fairy text-2xl text-[#d94f7c]">{letter.signoff}</p>
+          )}
+          <p class="text-script text-xl text-[#6b3a52]">{FIRMA}</p>
+        </footer>
+      </article>
+
+      <nav class="mt-8 flex w-full items-center justify-between">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#d94f7c] shadow-sm transition hover:scale-105"
+        >
+          ← Todas las cartas
+        </a>
+        <p class="text-xs text-[#a0567a]/80">{APODO}, te amo.</p>
+      </nav>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .birthday-letter {
+    background: linear-gradient(180deg, #fff8f0 0%, #ffe4ec 50%, #e8d5f2 100%);
+    border: 2px solid rgba(244, 201, 93, 0.85);
+    box-shadow:
+      0 0 60px -10px rgba(244, 201, 93, 0.5),
+      0 18px 40px -10px rgba(255, 111, 161, 0.5);
+  }
+</style>
+
+<script>
+  function todayKey(): string {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function diffDays(targetIsoDate: string): number {
+    const [y, m, d] = targetIsoDate.split("-").map(Number);
+    const target = new Date(y!, (m ?? 1) - 1, d ?? 1);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round(
+      (target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
+  }
+
+  function init(): void {
+    const root = document.querySelector<HTMLElement>(".letter-page");
+    if (!root) return;
+    const date = root.getAttribute("data-date");
+    if (!date) return;
+
+    const today = todayKey();
+    const locked = root.querySelector<HTMLElement>(".locked-screen");
+    const open = root.querySelector<HTMLElement>(".open-screen");
+    if (!locked || !open) return;
+
+    if (date <= today) {
+      open.classList.remove("hidden");
+      locked.classList.add("hidden");
+    } else {
+      locked.classList.remove("hidden");
+      open.classList.add("hidden");
+      const daysSpan = locked.querySelector<HTMLElement>("[data-locked-days]");
+      if (daysSpan) {
+        daysSpan.textContent = String(diffDays(date));
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+</script>

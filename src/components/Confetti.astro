@@ -1,0 +1,25 @@
+---
+const COUNT = 60;
+const palette = ["#ff6fa1", "#ffb6ce", "#f4c95d", "#e8d5f2", "#d94f7c", "#fff"];
+const items = Array.from({ length: COUNT }, () => {
+  const left = Math.round(Math.random() * 100);
+  const tx = (Math.random() * 200 - 100).toFixed(0);
+  const delay = (Math.random() * 4).toFixed(2);
+  const duration = (3 + Math.random() * 4).toFixed(2);
+  const color = palette[Math.floor(Math.random() * palette.length)];
+  const size = 6 + Math.round(Math.random() * 8);
+  const rotate = Math.round(Math.random() * 360);
+  return { left, tx, delay, duration, color, size, rotate };
+});
+---
+
+<div class="pointer-events-none fixed inset-0 -z-0 overflow-hidden" aria-hidden="true">
+  {
+    items.map((c) => (
+      <span
+        class="absolute"
+        style={`left:${c.left}%; top:0; width:${c.size}px; height:${c.size * 1.6}px; background:${c.color}; transform:rotate(${c.rotate}deg); animation: confetti-fall ${c.duration}s linear ${c.delay}s infinite; --tx:${c.tx}px; border-radius:2px;`}
+      />
+    ))
+  }
+</div>
