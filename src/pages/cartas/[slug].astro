@@ -27,18 +27,25 @@ const [yyyy, mm, dd] = letter.date.split("-").map(Number);
 const fechaLarga = `${dd} de ${monthNames[(mm ?? 1) - 1]} de ${yyyy}`;
 
 const diasRestantes = daysUntilBirthday(letter.date);
-const countdownPhrase = letter.isBirthday
-  ? "¡Hoy es tu cumpleaños, mi reina!"
-  : diasRestantes === 1
-    ? "Mañana es tu cumple!!"
-    : `Solamente faltan ${diasRestantes} días para tu cumple!!`;
+
+let unlockHora = "";
+if (letter.unlockAt) {
+  const dt = new Date(letter.unlockAt);
+  const h = dt.getHours();
+  const m = String(dt.getMinutes()).padStart(2, "0");
+  const ampm = h >= 12 ? "pm" : "am";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  unlockHora = `${h12}:${m} ${ampm}`;
+}
 ---
 
 <Layout title={`${letter.title} · Día ${letter.day}`} description={letter.preview}>
   <div
     class="letter-page relative mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col items-center justify-center px-5 py-8 sm:py-14"
     data-date={letter.date}
+    data-unlock-at={letter.unlockAt}
     data-birthday={letter.isBirthday ? "true" : "false"}
+    data-surprise={letter.isSurprise ? "true" : "false"}
   >
     {/* PANTALLA BLOQUEADA */}
     <div class="locked-screen hidden w-full">
@@ -47,14 +54,17 @@ const countdownPhrase = letter.isBirthday
           <Doodle type="heart-trio" size={70} class="opacity-70" />
         </div>
         <div class="relative z-10 flex flex-col items-center gap-4">
-          <Doodle type="cake" size={80} class="doodle-wobble" />
+          <Doodle type={letter.isSurprise ? "balloon" : "cake"} size={80} class="doodle-wobble" />
           <h1 class="title-marker">Aún no, {APODO}</h1>
           <p class="handwritten max-w-md">
-            Esta cartita se desbloquea el <span class="highlight">{fechaLarga}</span>.
-            Sé paciente, mi amor, vale la pena la espera.
+            {letter.unlockAt ? (
+              <>Esta sorpresita se desbloquea hoy a las <span class="highlight">{unlockHora}</span>. Faltan poquito, mi amor.</>
+            ) : (
+              <>Esta cartita se desbloquea el <span class="highlight">{fechaLarga}</span>. Sé paciente, mi amor, vale la pena la espera.</>
+            )}
           </p>
-          <p class="countdown-line mt-1">
-            Faltan <span class="countdown-pill" data-locked-days>--</span> días para abrirla
+          <p class="countdown-line mt-1" data-locked-line>
+            Faltan <span class="countdown-pill" data-locked-days>--</span> {letter.unlockAt ? "" : "días"} para abrirla
           </p>
           <a
             href="/"
@@ -117,6 +127,30 @@ const countdownPhrase = letter.isBirthday
           ))}
         </div>
 
+        {letter.image && (
+          <figure class="blur-reveal relative z-10 mx-auto mt-8 flex max-w-md flex-col items-center gap-3">
+            <div
+              class="blur-frame relative w-full overflow-hidden rounded-2xl"
+              data-blur={letter.image.blur ?? 36}
+            >
+              <img
+                src={letter.image.src}
+                alt={letter.image.alt}
+                class="blur-img block w-full"
+                style={`filter: blur(${letter.image.blur ?? 36}px); transform: scale(1.08);`}
+                draggable={false}
+              />
+              <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#ff8fb1]/20 via-transparent to-[#f4c95d]/20"></div>
+              <span class="pointer-events-none absolute right-3 top-3 rounded-full bg-[#d94f7c]/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white shadow">
+                Pista
+              </span>
+            </div>
+            {letter.image.caption && (
+              <figcaption class="text-hand text-lg text-[#7a3a55]" set:html={parseHighlights(letter.image.caption)} />
+            )}
+          </figure>
+        )}
+
         {/* countdown line */}
         <div class="relative z-10 mt-8 flex flex-wrap items-center gap-3">
           <p class="countdown-line">
@@ -140,6 +174,12 @@ const countdownPhrase = letter.isBirthday
           <p class="handwritten" set:html={parseHighlights(letter.closing)} />
           <p class="handwritten font-semibold text-[#2c2330]" set:html={parseHighlights(letter.signoffLine)} />
         </div>
+
+        {letter.clue && (
+          <div class="relative z-10 mt-8 border-t border-dashed border-[#d94f7c]/40 pt-4">
+            <p class="text-hand text-lg text-[#7a3a55] sm:text-xl" set:html={parseHighlights(letter.clue)} />
+          </div>
+        )}
 
         {/* firma */}
         <footer class="relative z-10 mt-10 flex items-end justify-between">
@@ -216,10 +256,26 @@ const countdownPhrase = letter.isBirthday
     }
   }
 
-  function init(): void {
-    const root = document.querySelector<HTMLElement>(".letter-page");
-    if (!root) return;
+  function fmtCountdown(remainingMs: number): { value: string; unit: string } {
+    if (remainingMs <= 0) return { value: "0", unit: "" };
+    const totalSeconds = Math.floor(remainingMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+    if (hours >= 1) {
+      return { value: `${hours}h ${mins}m`, unit: "" };
+    }
+    if (mins >= 1) {
+      return { value: `${mins}m ${String(secs).padStart(2, "0")}s`, unit: "" };
+    }
+    return { value: `${secs}s`, unit: "" };
+  }
+
+  let timer: number | null = null;
+
+  function render(root: HTMLElement): void {
     const date = root.getAttribute("data-date");
+    const unlockAt = root.getAttribute("data-unlock-at");
     if (!date) return;
 
     const today = todayKey();
@@ -228,24 +284,64 @@ const countdownPhrase = letter.isBirthday
     if (!locked || !open) return;
 
     const preview = isPreview();
+    let isOpen = false;
 
-    if (preview || date <= today) {
+    if (unlockAt) {
+      const unlockMs = new Date(unlockAt).getTime();
+      isOpen = preview || Date.now() >= unlockMs;
+
+      if (!isOpen) {
+        const daysSpan = locked.querySelector<HTMLElement>("[data-locked-days]");
+        if (daysSpan) {
+          const { value } = fmtCountdown(unlockMs - Date.now());
+          daysSpan.textContent = value;
+        }
+        const lockLine = locked.querySelector<HTMLElement>("[data-locked-line]");
+        if (lockLine) {
+          lockLine.innerHTML =
+            'Faltan <span class="countdown-pill" data-locked-days>' +
+            (locked.querySelector<HTMLElement>("[data-locked-days]")?.textContent ?? "--") +
+            "</span> para abrirla";
+        }
+      }
+    } else {
+      isOpen = preview || date <= today;
+      if (!isOpen) {
+        const daysSpan = locked.querySelector<HTMLElement>("[data-locked-days]");
+        if (daysSpan) {
+          daysSpan.textContent = String(diffDays(date));
+        }
+      }
+    }
+
+    if (isOpen) {
       open.classList.remove("hidden");
       locked.classList.add("hidden");
-      if (preview) {
-        const banner = document.createElement("div");
-        banner.textContent = "MODO PREVIEW (solo tú la ves)";
-        banner.style.cssText =
-          "position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#d94f7c;color:#fff;padding:6px 14px;border-radius:999px;font-family:system-ui,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;z-index:50;box-shadow:0 6px 18px -4px rgba(217,79,124,0.5);";
-        document.body.appendChild(banner);
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
       }
     } else {
       locked.classList.remove("hidden");
       open.classList.add("hidden");
-      const daysSpan = locked.querySelector<HTMLElement>("[data-locked-days]");
-      if (daysSpan) {
-        daysSpan.textContent = String(diffDays(date));
-      }
+    }
+
+    if (preview && !document.querySelector("[data-preview-banner]")) {
+      const banner = document.createElement("div");
+      banner.dataset.previewBanner = "1";
+      banner.textContent = "MODO PREVIEW (solo tú la ves)";
+      banner.style.cssText =
+        "position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#d94f7c;color:#fff;padding:6px 14px;border-radius:999px;font-family:system-ui,sans-serif;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;z-index:50;box-shadow:0 6px 18px -4px rgba(217,79,124,0.5);";
+      document.body.appendChild(banner);
+    }
+  }
+
+  function init(): void {
+    const root = document.querySelector<HTMLElement>(".letter-page");
+    if (!root) return;
+    render(root);
+    if (root.getAttribute("data-unlock-at")) {
+      timer = window.setInterval(() => render(root), 1000);
     }
   }
 

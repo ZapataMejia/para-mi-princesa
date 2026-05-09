@@ -1,6 +1,14 @@
+export interface LetterImage {
+  src: string;
+  alt: string;
+  blur?: number;
+  caption?: string;
+}
+
 export interface Letter {
   day: number;
   date: string;
+  unlockAt?: string;
   slug: string;
   title: string;
   emoji: string;
@@ -12,7 +20,11 @@ export interface Letter {
   marginNote?: string;
   closing: string;
   signoffLine: string;
+  clue?: string;
+  image?: LetterImage;
   isBirthday?: boolean;
+  isSurprise?: boolean;
+  dayLabel?: string;
 }
 
 export const NOMBRE = "Esmeralda";
@@ -254,6 +266,34 @@ export const letters: Letter[] = [
   },
   {
     day: 13,
+    date: "2026-05-09",
+    unlockAt: "2026-05-09T14:00:00-05:00",
+    slug: "pista-regalos",
+    title: "Una pistica de tus regalos",
+    emoji: "🎁",
+    preview: "Una sorpresita adelantada, abre a las 2 de la tarde.",
+    greeting: "Mi Amor!!",
+    petNames: "Mi Reina, Mi Tesoro, Mi Pollito",
+    opener: "*Gracias por esperar tantos días*, mi vida.",
+    body: [
+      "Hoy a las *2 de la tarde* te tengo una sorpresita adelantada.",
+      "Aquí abajo hay una *pequeña pistica* de los regalos que te tengo, *muy borrosita*. No vale acercarse mucho a la pantalla, princesa 👀",
+      "Adivina qué hay… *muy prontito* lo verás todo bien clarito.",
+    ],
+    marginNote: "“Casi, casi es tu día”",
+    closing: "*Te Amo más* que a mi propia vida, mi Pollito.",
+    signoffLine: "Te Amo Hoy y Siempre",
+    image: {
+      src: "/img/regalos-pista.png",
+      alt: "Una pista borrosa de tus regalos, princesa",
+      blur: 42,
+      caption: "shhh… *no se vale espiar mucho*",
+    },
+    isSurprise: true,
+    dayLabel: "Sorpresa",
+  },
+  {
+    day: 14,
     date: "2026-05-10",
     slug: "feliz-cumpleanos",
     title: "FELIZ CUMPLEAÑOS, MI PRINCESA POLLITO",
@@ -263,6 +303,7 @@ export const letters: Letter[] = [
     petNames: "Mi Reina, Mi Esmeralda, Mi Pollito",
     opener: "*¡Llegó tu día, mi vida!*",
     body: [
+      "Mi amor, *ya celebramos tu fiesta*. La hicimos con muchísimo amor, con cada detallito pensado para ti. No sé si en este momento todavía estemos celebrando, pero *espero que este 10 de mayo sea único y perfecto para ti*… tan perfecto como lo fue para mí.",
       "Hoy hace años nació la *persona más linda del universo*: tú.",
       "Gracias por *existir*, gracias por *elegirme*, gracias por cada beso, cada risa, cada noche de hablar de tonterías hasta el sueño.",
       "Te deseo un año lleno de cosas hermosas. Que se te cumplan tus sueños grandes y los chiquitos también. Que estés *sana, en paz, feliz*.",

@@ -15,11 +15,51 @@ function diffDays(targetIsoDate: string): number {
   return Math.round(ms / (1000 * 60 * 60 * 24));
 }
 
+function isPreviewActive(): boolean {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return (
+      params.get("p") === "1" ||
+      params.get("preview") === "1" ||
+      params.get("santi") === "1"
+    );
+  } catch {
+    return false;
+  }
+}
+
 function applyState(card: HTMLElement, today: string): void {
   const date = card.getAttribute("data-date");
   if (!date) return;
+  const unlockAt = card.getAttribute("data-unlock-at");
 
   card.classList.remove("is-locked", "is-today", "is-past");
+
+  if (unlockAt) {
+    const unlockMs = new Date(unlockAt).getTime();
+    const nowMs = Date.now();
+    if (nowMs >= unlockMs) {
+      if (date < today) {
+        card.classList.add("is-past");
+      } else {
+        card.classList.add("is-today");
+      }
+    } else {
+      card.classList.add("is-locked");
+      const label = card.querySelector<HTMLElement>(".countdown-text");
+      if (label) {
+        const remainingMs = unlockMs - nowMs;
+        const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+        const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        if (hours >= 1) {
+          label.innerHTML = `Faltan <strong>${hours}h ${mins}m</strong>`;
+        } else {
+          label.innerHTML = `Faltan <strong>${mins}m</strong>`;
+        }
+      }
+    }
+    return;
+  }
 
   if (date < today) {
     card.classList.add("is-past");
@@ -41,6 +81,7 @@ function applyState(card: HTMLElement, today: string): void {
 function attachClickGuard(card: HTMLAnchorElement): void {
   card.addEventListener("click", (event) => {
     if (card.classList.contains("is-locked")) {
+      if (isPreviewActive()) return;
       event.preventDefault();
       card.classList.remove("is-shaking");
       void card.offsetWidth;
@@ -57,10 +98,12 @@ function attachClickGuard(card: HTMLAnchorElement): void {
 export function initLockState(): void {
   const today = todayKey();
   const cards = document.querySelectorAll<HTMLAnchorElement>(".letter-card");
-  cards.forEach((c) => {
-    applyState(c, today);
-    attachClickGuard(c);
-  });
+  const refresh = () => {
+    cards.forEach((c) => applyState(c, today));
+  };
+  refresh();
+  cards.forEach((c) => attachClickGuard(c));
+  window.setInterval(refresh, 30000);
 }
 
 export function getCardState(date: string): "locked" | "today" | "past" {

@@ -17,12 +17,17 @@ const dayLabel = String(dd).padStart(2, "0");
 ---
 
 <a
-  class="letter-card group relative flex aspect-[4/5] flex-col items-center justify-between overflow-hidden rounded-3xl p-5 text-center transition-transform duration-300 will-change-transform princess-card princess-card--locked"
+  class:list={[
+    "letter-card group relative flex aspect-[4/5] flex-col items-center justify-between overflow-hidden rounded-3xl p-5 text-center transition-transform duration-300 will-change-transform princess-card princess-card--locked",
+    letter.isSurprise ? "is-surprise-card" : "",
+  ]}
   href={`/cartas/${letter.slug}`}
   data-date={letter.date}
+  data-unlock-at={letter.unlockAt}
   data-slug={letter.slug}
   data-day={letter.day}
   data-birthday={letter.isBirthday ? "true" : "false"}
+  data-surprise={letter.isSurprise ? "true" : "false"}
   aria-label={`Carta del día ${letter.day}: ${letter.title}`}
 >
   <span class="card-corner-tl pointer-events-none absolute -top-3 -left-3 h-10 w-10 rounded-full bg-[#f4c95d]/30 blur-xl"></span>
@@ -30,7 +35,7 @@ const dayLabel = String(dd).padStart(2, "0");
 
   <header class="flex w-full items-center justify-between text-[#a0567a]">
     <span class="rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.18em]">
-      día {letter.day}
+      {letter.dayLabel ?? `día ${letter.day}`}
     </span>
     <span class="text-[11px] font-semibold uppercase tracking-[0.18em]">
       {dayLabel} {monthLabel}
@@ -113,5 +118,12 @@ const dayLabel = String(dd).padStart(2, "0");
   }
   .letter-card.is-shaking {
     animation: wiggle 0.6s ease-in-out;
+  }
+  .letter-card.is-surprise-card {
+    background: linear-gradient(180deg, #fff5d6 0%, #ffe4ec 100%);
+    border: 1.5px dashed rgba(244, 201, 93, 0.85);
+  }
+  .letter-card.is-surprise-card.is-locked {
+    background: linear-gradient(180deg, #fff5d6 0%, #f6e7f0 100%);
   }
 </style>
